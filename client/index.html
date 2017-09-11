@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>mango-tree</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <h1>{{ msg }}</h1>
+            <img v-if="age5" src="./assets/image/mango-tree-1.png" alt="">
+            <img v-else-if="age10" src="./assets/image/mango-tree-5.png" alt="">
+            <img v-else-if="age20" src="./assets/image/mango-tree-10.png" alt="">
+            <img v-else-if="age30" src="./assets/image/mango-tree-20.png" alt="">
+            <img v-else-if="mango_tree.healthyStatus === false" src="./assets/image/mango-tree-died.png" alt="">
+          </div>
+          <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Heigt (meters)</th>
+                  <th>Age (years old)</th>
+                  <th>Status</th>
+                  <th>Harvested</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{mango_tree._height}}</td>
+                  <td>{{mango_tree._age}}</td>
+                  <td v-if="mango_tree.healthyStatus">Healty</td>
+                  <td v-else>Died</td>
+                  <td>{{mango_tree._harvested}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    var config = {
+        apiKey: "AIzaSyDIQuNU-VJBsIo58R3yvvFeCJZ9f4jwGHk",
+        authDomain: "kanban-ab936.firebaseapp.com",
+        databaseURL: "https://kanban-ab936.firebaseio.com",
+        projectId: "kanban-ab936",
+        storageBucket: "kanban-ab936.appspot.com",
+        messagingSenderId: "330180731111"
+      };
+      
+      firebase.initializeApp(config);
+      
+      var db = firebase.database();
+      
+      var app = new Vue({
+        el: '#app',
+        data: {
+          msg: 'mango tree'
+        },
+        computed: {
+          age5: function () {
+            return this.mango_tree._age <= 5 && this.mango_tree.healthyStatus
+          },
+          age10: function () {
+            return this.mango_tree._age <= 10 && this.mango_tree.healthyStatus
+          },
+          age20: function () {
+            return this.mango_tree._age <= 20 && this.mango_tree.healthyStatus
+          },
+          age30: function () {
+            return this.mango_tree._age <= this.mango_tree.maxAge && this.mango_tree.healthyStatus
+          }
+        },
+        firebase: function () {
+          return {
+            mango_tree: {
+              source: db.ref('tree'),
+              asObject: true
+            }
+          }
+        },
+        created () {
+          console.log(this.mango_tree.healthyStatus);
+        }
+      })
+    </script>
+  </body>
+</html>
